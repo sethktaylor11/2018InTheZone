@@ -979,6 +979,7 @@ void Auto_Stack(int* ConeCount_Ptr, int Direction) {
 			// Increment cone count, stop chainbar, reset Intake Passive power (we changed it if we're dropping off mogo)
 			(*ConeCount_Ptr)++;
 			Set_Chain_Bar(-10);
+			Set_Lift(-10);
 			Tele_Intake_Passive_Power = 30;
 
 			// Restart tasks that we shut down, return control to them
@@ -1461,6 +1462,7 @@ task autonomous() {
 	// Get tird cone
 
 	Drive(120,350);
+	Set_Lift(20);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
@@ -1541,7 +1543,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
-	Drive(120,-1000);
+	Drive(120,-1020);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -1627,7 +1629,7 @@ task autonomous() {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Score second Mogo
-	Drive(125,-2200);
+	Drive(125,-2150);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
@@ -1642,7 +1644,7 @@ task autonomous() {
 		wait1Msec(25);
 	}
 
-	Drive(120,250);
+	Drive(120,200);
 	Mogo(100);
 	while(Drive_Enable || Mogo_Enable) {
 		wait1Msec(25);
