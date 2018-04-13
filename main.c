@@ -1541,7 +1541,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
-	Drive(120,-1050);
+	Drive(120,-1000);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -1575,7 +1575,7 @@ task autonomous() {
 	// Get second mogo
 
 	Mogo(100);
-	Drive(120,1400);
+	Drive(120,1500);
 	while(Drive_Enable || Mogo_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
