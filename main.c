@@ -109,7 +109,7 @@ void Turn(int Power, int Angle);
 
 task Auto_Turn();
 	PIDControl TurnPID;
-	#define Gyro_Scale 1. //(360.0/368.3);
+	#define Gyro_Scale .95
 	#define Turn_Refresh_Time 20 // in miliseconds
 	#define P_Turn 5.00 	// needs to be large enough to get us to the target from any displacement
 	#define D_Turn (sqrt(4*P_Turn*Robot_MOI)) // This is determined by soling 2nd order diff eq for critical damping. See notebook
@@ -909,6 +909,9 @@ void Auto_Stack(int* ConeCount_Ptr, int Direction) {
 	if(Direction == 1) {
 			stopTask(Auto_Chain_Bar);
 
+			// Set intake
+			Set_Intake(20);
+
 			// This is for when we drop off mogo/want to release without grabbing the top cone
 			if(SensorValue[Mogo_In_Switch] != 1) {
 				Tele_Intake_Passive_Power = -100;
@@ -987,10 +990,6 @@ void Auto_Stack(int* ConeCount_Ptr, int Direction) {
 		// Stop tasks
 		stopTask(Auto_Chain_Bar);
 
-		// Lift up/ release cone
-		wait1Msec(100);
-		Set_Lift(10);
-
 		// Run chainbar until we're on the ground
 		while(SensorValue[Intake_Pot] < 3400) {
 				if(SensorValue[Intake_Pot] > 2500) { Set_Intake(100); Set_Lift(20); }
@@ -1003,7 +1002,6 @@ void Auto_Stack(int* ConeCount_Ptr, int Direction) {
 		// Set intake to passive (after waiting for a bit)
 		wait1Msec(100);
 		Set_Intake(20);
-		Set_Lift(-10);
 
 		startTask(Auto_Chain_Bar);
 	} // else if (Direction == -1) {
@@ -1406,18 +1404,15 @@ task autonomous() {
 	// Pick up first mogo, score preload on it
 	int ConeCount = 0; 			// For keeping track of cones
 	TurnPID.Offset = 0;
-	Mogo(100);			/// Positive means out, negative means in
 	Set_Intake(20);	// so that preload stays in
 	Set_Lift(-10);	// So that lift is a little elevated
-	while(Mogo_Enable) {
+
+	Mogo(100);			/// Positive means out, negative means in
+	Drive(120,1650);
+	while(Mogo_Enable || Drive_Enable) {
 		wait1Msec(25);
 	} // while(Mogo_Enable || Drive_Enable) {
 
-	// Get first mogo
-	Drive(115,1650);
-	while(Drive_Enable) {
-		wait1Msec(25);
-	} // 	while(Drive_Enable) {
 	Robot_MOI += (Mobile_Goal_Mass*.15*.15); 	// to account for the fact that we're carrying mobile goals
 	//0.15 m is the approximate/effective radius of the mobile goals for calculating moment of inertia
 	Robot_Mass += Mobile_Goal_Mass;
@@ -1435,39 +1430,58 @@ task autonomous() {
 	Set_Intake(0);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Get another cone
+	// Get another two cones
+
+	// Forces lift into ground
+	Set_Lift(100);
+	wait1Msec(200);
+	Set_Lift(20);
+
+	///////////////////////////////////////////
+	// Get second cone
+	Drive(120,350);
+	while(Drive_Enable) {
+		wait1Msec(25);
+	}
+
+	// Pick up cone
+	Auto_Stack(&ConeCount, -1);
+	wait1Msec(200);
+
+	// Score second cone
+	Auto_Stack(&ConeCount, 1);
+	wait1Msec(200);
+
+	// Drop off second cone
+	Set_Intake(-100);
+	wait1Msec(200);
+	Set_Intake(0);
+
+	////////////////////////////////////////////////
+	// Get tird cone
 
 	Drive(120,350);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
 
-	// Forces lift into ground
-	clearTimer(T1);
-	timer = time1(T1);
-	while(SensorValue[Lift_Down_Switch] == 0 && timer < 1000) {
-		timer = time1(T1);
-		Set_Lift(100);
-	}
-	Set_Lift(-10);
-
 	// Pick up cone
 	Auto_Stack(&ConeCount, -1);
-	wait1Msec(400);
+	wait1Msec(200);
 
 	// Score second cone
 	Auto_Stack(&ConeCount, 1);
 	Set_Lift(-10);
-	wait1Msec(400);
+	wait1Msec(200);
 
 	// Drop off second cone
 	Set_Intake(-100);
-	wait1Msec(300);
+	wait1Msec(200);
 	Set_Intake(0);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Get into position for scoring first mogo
-	Drive(120,-1725);
+	Drive(125,-2200);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // 	while(Drive_Enable) {
@@ -1477,30 +1491,30 @@ task autonomous() {
 		wait1Msec(25);
 	} // 	while(Turn_Enable) {
 
-	Drive(115,-1100);
+	Drive(115,-900);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
 
-	Turn(120,-95);
+	Turn(120,-90);
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Drop off first mogo
-	Drive(125,750);
+	Drive(125,650);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Mogo_Enable || Drive_Enable) {
 
 	stopTask(Auto_Mogo);
 	Set_Mogo(100);
-	Drive(120,110);
+	Drive(120,240);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
-	Set_Mogo(20);
+	Set_Mogo(50);
 
 	wait1Msec(250);
 	Robot_MOI -= Mobile_Goal_Mass*.15*.15; 	// We've dropped off mogo's
@@ -1532,11 +1546,13 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
 
-	Turn(120,45);
+	Turn(120,135);
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
+	Set_Lift(-20);
+	/*
 	Set_Drive(-125,-125);
 	wait1Msec(500);
 	Set_Drive(0,0);
@@ -1553,16 +1569,14 @@ task autonomous() {
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
-
-	Mogo(100);
-	while(Mogo_Enable) {
-		wait1Msec(25);
-	} // while(Mogo_Enable) {
+	*/
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Get second mogo
+
+	Mogo(100);
 	Drive(120,1400);
-	while(Drive_Enable) {
+	while(Drive_Enable || Mogo_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
 
@@ -1581,51 +1595,56 @@ task autonomous() {
 	ConeCount = 0;
 
 	// Get into position
-	Drive(110,300);
+	Drive(110,350);
+	Set_Lift(80);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
+	Set_Lift(20);
 
 	// Drop down lift
+	/*
 	clearTimer(T1);
 	timer = time1(T1);
 	while(SensorValue[Lift_Down_Switch] == 0 && timer < 1000) {
 		timer = time1(T1);
 		Set_Lift(100);
 	}
-	Set_Lift(-10);
+	*/
 
 	// Drop chainbar
 	Auto_Stack(&ConeCount, -1);
-	wait1Msec(300);
+	wait1Msec(200);
 
 	// Grab cone
 	Auto_Stack(&ConeCount, 1);
+	wait1Msec(200);
 
 	// Drop off cone
 	Set_Intake(-100);
-	wait1Msec(300);
+	wait1Msec(200);
 	Set_Intake(0);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Score second Mogo
-	Drive(120,-1500);
+	Drive(125,-2200);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
 
-	Turn(120,-180);
+	// Lift up a bit (to prevent mogo from catching)
+	Set_Lift(-100);
+	wait1Msec(200);
+	Set_Lift(-10);
+
+	Turn(120,135);
 	while(Turn_Enable) {
 		wait1Msec(25);
 	}
 
-	Drive(120,400);
-	while(Drive_Enable) {
-		wait1Msec(25);
-	}
-
+	Drive(120,250);
 	Mogo(100);
-	while(Mogo_Enable) {
+	while(Drive_Enable || Mogo_Enable) {
 		wait1Msec(25);
 	}
 
