@@ -1376,9 +1376,7 @@ task autonomous() {
 	Auto_Stack(&ConeCount, -1);
 
 	// Drive to get 4th cone
-	stopTask(Auto_Chain_Bar);
 	Set_Intake(100);			// To suck up cone
-	Set_Chain_Bar(-5);			// Reduced passive state, helps pick up last cone
 	Drive(120,350);
 	Set_Lift(20);
 	while(Drive_Enable) {
@@ -1386,7 +1384,8 @@ task autonomous() {
 	}
 
 	// Wait for some time, picks up 4th cone
-	Set_Chain_Bar(0);
+	stopTask(Auto_Chain_Bar);
+	Set_Chain_Bar(20);
 	wait1Msec(300);
 	startTask(Auto_Chain_Bar);
 
