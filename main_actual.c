@@ -966,7 +966,7 @@ void Auto_Stack(int* ConeCount_Ptr, int Direction) {
 				// Increase chainbar power to prevent dropping while accelerating up
 				if(Stacker_Lift_At_Target == 0) {
 					// Check if chainbar is too low or too high
-					if(SensorValue[Intake_Pot] > 3000) { Set_Chain_Bar(-100); }
+					if(SensorValue[Intake_Pot] > 2950) { Set_Chain_Bar(-100); }
 					else if(SensorValue[Intake_Pot] < 2300) { Set_Chain_Bar(0); }
 					else { Set_Chain_Bar(-25); }
 				} // 	if(Stacker_Lift_At_Target == 0) {
@@ -1386,11 +1386,11 @@ task autonomous() {
 	// Wait for some time, picks up 4th cone
 	stopTask(Auto_Chain_Bar);
 	Set_Chain_Bar(20);
-	wait1Msec(300);
+	wait1Msec(500);
 	startTask(Auto_Chain_Bar);
 
 	// Back up a little
-	Drive(150,-100);
+	Drive(120,-250);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
@@ -1407,7 +1407,7 @@ task autonomous() {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Get into position for scoring first mogo
-	Drive(125,-2500);					// Always -(1500+(ConeCount-1)*350))
+	Drive(125,-2400);					// Always -(1500+(ConeCount-1)*350))
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // 	while(Drive_Enable) {
@@ -1417,7 +1417,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // 	while(Turn_Enable) {
 
-	Drive(120,-875);
+	Drive(120,-825);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -1436,7 +1436,7 @@ task autonomous() {
 
 	stopTask(Auto_Mogo);
 	Set_Mogo(100);
-	Drive(120,240);
+	Drive(120,250);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	}
@@ -1477,7 +1477,6 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
-	Set_Lift(-20);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Get second mogo
 
