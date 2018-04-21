@@ -378,7 +378,7 @@ task Tele_Auto_Stacker() {
 					wait1Msec(150);
 				}
 				else {	 // For when not dropping of mogo
-					Stacker_Lift_Target = 2450 - 110*Cone_Counter;
+					Stacker_Lift_Target = 2450 - 105*Cone_Counter;
 				}
 
 				// Set Target, (at target = 0 means we are not at the target)
@@ -452,7 +452,7 @@ task Tele_Auto_Stacker() {
 
 			Set_Intake(-100);
 			Set_Lift(-100);
-			wait1Msec(150);
+			wait1Msec(200);
 			if(SensorValue[Lift_Pot] > 2100) {
 				wait1Msec((int)(.4*(SensorValue[Lift_Pot]-2200)));
 			}

@@ -910,7 +910,7 @@ task autonomous() {
 	//0.15 m is the approximate/effective radius of the mobile goals for calculating moment of inertia
 	Robot_Mass += 2*Mobile_Goal_Mass;
 
-	Drive(85,900);
+	Drive(85,950);
 	Mogo(100);
 	while(Mogo_Enable || Drive_Enable) {
 		wait1Msec(25);
@@ -929,7 +929,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
-	Drive(85,900);
+	Drive(85,850);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -941,7 +941,7 @@ task autonomous() {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Drop off first two mogo's
-	Drive(125,475);
+	Drive(127,650);
 	Mogo(-100);
 	while(Mogo_Enable || Drive_Enable) {
 		wait1Msec(25);
@@ -949,16 +949,20 @@ task autonomous() {
 	Angle_Offset = 0;
 	//reset angle offset since the robot drives perpendicular to the bar whenever it drops off the mobile goals and effectively realigns the robot
 
+	Set_Mogo(-30);
 	wait1Msec(250);
 	Robot_MOI -= Mobile_Goal_Mass*2*.15*.15; 	// We've dropped off mogo's
 	Robot_Mass -= 2*Mobile_Goal_Mass;
 
-	Drive(125,-610);
-	Mogo(-100);
+	Drive(125,-740);
 	//use this command again so in case the bars try to push the mogo intake up again, it will stay down
-	while(Mogo_Enable || Drive_Enable) {
+	while(Drive_Enable) {
+		if(SensorValue[Mogo_Out_Switch1] == 0 || SensorValue[Mogo_Out_Switch2] == 0) { Set_Mogo(-50); }
+		else{ Set_Mogo(-20); }
+
 		wait1Msec(25);
 	} // while(Mogo_Enable || Drive_Enable) {
+	Set_Mogo(0);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Move into position for second set of mobile goals
@@ -978,7 +982,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
-	Drive(120,490);
+	Drive(120,650);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -1020,7 +1024,7 @@ task autonomous() {
 	Robot_Mass += 2*Mobile_Goal_Mass;
 
 	Mogo(100);
-	Drive(85,1150);
+	Drive(85,1200);
 	while(Drive_Enable || Mogo_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable || Mogo_Enable) {
@@ -1033,7 +1037,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
-	Drive(85,900);
+	Drive(85,800);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -1046,7 +1050,7 @@ task autonomous() {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Drop off second two mogo's
 
-	Drive(125,475);
+	Drive(127,650);
 	Mogo(-100);
 	while(Mogo_Enable || Drive_Enable) {
 		wait1Msec(25);
@@ -1057,11 +1061,15 @@ task autonomous() {
 	Robot_MOI -= Mobile_Goal_Mass*2*.15*.15; 	// We've dropped off mogo's
 	Robot_Mass -= 2*Mobile_Goal_Mass;
 
-	Drive(125,-610);
-	Mogo(-100);
-	while(Mogo_Enable || Drive_Enable) {
+	Drive(125,-740);
+	//use this command again so in case the bars try to push the mogo intake up again, it will stay down
+	while(Drive_Enable) {
+		if(SensorValue[Mogo_Out_Switch1] == 0 || SensorValue[Mogo_Out_Switch2] == 0) { Set_Mogo(-50); }
+		else{ Set_Mogo(-20); }
+
 		wait1Msec(25);
 	} // while(Mogo_Enable || Drive_Enable) {
+	Set_Mogo(0);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Get in position for 5th mogo
@@ -1102,7 +1110,7 @@ task autonomous() {
 	Angle_Offset = 0;	// We've backed up against the wall, all errors should be reset
 	Drive_Offset = 0;
 
-	Drive(120,250);
+	Drive(120,200);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -1114,7 +1122,7 @@ task autonomous() {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Get 5th mogo
-	Drive(120,820);
+	Drive(120,1050);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
@@ -1129,20 +1137,20 @@ task autonomous() {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Score 5th mogo
-	Drive(110,-650);
+	Drive(110,-1300);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
 
-	Turn(110,195);
+	Turn(110,210);
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
 
-	Drive(100,800);
-	while(Drive_Enable) {
+	Drive(120,500);
+	while(Drive_Enable){
 		wait1Msec(25);
-	} // while(Drive_Enable) {
+	}
 
 	Mogo(-100);
 	while(Mogo_Enable) {
@@ -1152,7 +1160,17 @@ task autonomous() {
 	Robot_MOI -= Mobile_Goal_Mass*.15*.15; 	// We've dropped off a mogo
 	Robot_Mass -= Mobile_Goal_Mass;
 
-	Drive(120,-1700);
+	Drive(120,-500);
+	while(Drive_Enable) {
+		wait1Msec(25);
+	} // while(Drive_Enable) {
+
+	Turn(110,-30);
+	while(Turn_Enable) {
+		wait1Msec(25);
+	} // while(Turn_Enable) {
+
+	Drive(120,-1500);
 	while(Drive_Enable) {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
