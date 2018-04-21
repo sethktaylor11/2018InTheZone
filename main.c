@@ -444,6 +444,7 @@ task Tele_Auto_Stacker() {
 		} // (vexRT[Btn8R] == 1 && SensorValue[Chainbar_In_Switch] == 0) {
 
 		else if(vexRT[Btn8R] == 1 && SensorValue[ChainBar_In_Switch] == 1) {
+		else if(vexRT[Btn8R] == 1 && SensorValue[ChainBar_In_Switch] == 1) {
 
 			// Stop tasks
 			stopTask(Tele_Lift);
@@ -452,24 +453,29 @@ task Tele_Auto_Stacker() {
 
 			Set_Intake(-100);
 			Set_Lift(-100);
-			wait1Msec(100);
+			wait1Msec(150);
 			if(SensorValue[Lift_Pot] > 2200) {
 				wait1Msec((int)(.4*(SensorValue[Lift_Pot]-2200)));
 			}
-			Set_Chain_Bar(100);
-			Set_Lift(-10);
-			wait1Msec(100);
-			Set_Chain_Bar(50);
-			startTask(Tele_Lift);
-			wait1Msec(250);
-			Set_Intake(50);
-			Set_Chain_Bar(0);
 
+			Set_Lift(-10);
+			Set_Chain_Bar(100);
+			wait1Msec(150);
+
+			Set_Chain_Bar(40);
+			clearTimer(T1);
+			while(SensorValue[Intake_Pot] < 2300 &&  time1(T1) < 1000) {
+				wait1Msec(25);
+			} // while(SensorValue[Intake_Pot] < 2300) {
+
+			Set_Intake(Tele_Intake_Passive_Power);
+			Set_Chain_Bar(-20);
+
+			startTask(Tele_Lift);
 			startTask(Tele_Chain_Bar);
 			startTask(Tele_Intake);
 		} // else if (vexRT[Btn8R] == 1 && SensorValue[ChainBar_In_Switch] == 1) {
 		else {
-			Set_Chain_Bar(Chain_Bar_Power);
 			wait1Msec(50);
 		} // else {
 	} // 	while(true) {
