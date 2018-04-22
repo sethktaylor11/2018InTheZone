@@ -444,7 +444,6 @@ task Tele_Auto_Stacker() {
 		} // (vexRT[Btn8R] == 1 && SensorValue[Chainbar_In_Switch] == 0) {
 
 		else if(vexRT[Btn8R] == 1 && SensorValue[ChainBar_In_Switch] == 1) {
-		else if(vexRT[Btn8R] == 1 && SensorValue[ChainBar_In_Switch] == 1) {
 
 			// Stop tasks
 			stopTask(Tele_Lift);
