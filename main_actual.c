@@ -104,6 +104,9 @@ task Drive_Assist();
 
 void Initialize_Gyro(void);
 
+void Auto_Selecter(void);
+	signed char Turn_Sign = 1;
+
 void Turn(int Power, int Angle);
 	short Turn_Enable = 0;
 
@@ -728,6 +731,42 @@ void Initialize_Gyro(void) {
 	wait1Msec(2000);
 }
 
+void Auto_Selecter(void) {
+	/*
+	int auto_num = 0;
+	const unsigned char num_auto = 2;
+	while (Center button is not pressed) {
+		if (Left button is pressed) {
+			auto_num = (auto_num-1)%(num_auto);
+			//if(auto_num == 0) {
+			//	auto_num = 1;
+			//}
+			//else { auto_num--; } 
+		}	
+		else if(Right button is pressed) {
+			auto_num = (auto_num+1)%(num_auto);
+			//if(auto_num == 1) {
+			//	auto_num=0;
+			//}
+			//else { auto_num++; }
+		}
+
+		switch (auto_num) {
+			case 0: 		// robot starts on left of corner
+				display L auto 
+				Turn_Sign = -1;
+				wait1Msec(200);
+				break;
+			case 1: 		// robot starts on right of corner 
+				display R auto
+				turn_Sign = 1;
+				wait1Msec(200);
+				break;
+		} // switch (auto_num) {
+	} // while (Center button is not pressed) {
+	*/
+} // void Auto_Selecter(void) {
+
 void Turn(int Power, int Angle) {
 	// Check that power is a positive number
 	if (Power < 0) { return; }
@@ -1224,6 +1263,7 @@ task LCD() {
 void pre_auton() {
 	bStopTasksBetweenModes = true;
 	Initialize_Gyro();
+	Auto_Selecter();
 	SensorValue[Drive_Encode] = 0;
 	SensorValue[Gyro] = 0;
 }
@@ -1412,7 +1452,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // 	while(Drive_Enable) {
 
-	Turn(120,-45);
+	Turn(120,-(Turn_Sign*45));
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // 	while(Turn_Enable) {
@@ -1422,7 +1462,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
 
-	Turn(120,-90);
+	Turn(120,-(Turn_Sign*90));
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
@@ -1462,7 +1502,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Mogo_Enable) {
 
-	Turn(120,90);
+	Turn(120,(Turn_Sign*90));
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
@@ -1472,7 +1512,7 @@ task autonomous() {
 		wait1Msec(25);
 	} // while(Drive_Enable) {
 
-	Turn(120,135);
+	Turn(120,(Turn_Sign*135));
 	while(Turn_Enable) {
 		wait1Msec(25);
 	} // while(Turn_Enable) {
@@ -1544,7 +1584,7 @@ task autonomous() {
 	Set_Lift(-10);
 
 	// Turn into position (align with 10 pt bar)
-	Turn(120,135);
+	Turn(120,(Turn_Sign*135));
 	while(Turn_Enable) {
 		wait1Msec(25);
 	}
