@@ -732,18 +732,20 @@ void Initialize_Gyro(void) {
 }
 
 void Auto_Selecter(void) {
-	/*
 	int auto_num = 0;
 	const unsigned char num_auto = 2;
-	while (Center button is not pressed) {
-		if (Left button is pressed) {
+	while (nLCDButtons != 2) {
+		//while center button is not pressed
+		if (nLCDButtons == 1) {
+			//if left button is pressed
 			auto_num = (auto_num-1)%(num_auto);
 			//if(auto_num == 0) {
 			//	auto_num = 1;
 			//}
 			//else { auto_num--; } 
 		}	
-		else if(Right button is pressed) {
+		else if(nLCDButtons == 4) {
+			//if right button is pressed
 			auto_num = (auto_num+1)%(num_auto);
 			//if(auto_num == 1) {
 			//	auto_num=0;
@@ -753,18 +755,17 @@ void Auto_Selecter(void) {
 
 		switch (auto_num) {
 			case 0: 		// robot starts on left of corner
-				display L auto 
+				displayLCDstring(1,0,'L   LeftAuto   R')
 				Turn_Sign = -1;
 				wait1Msec(200);
 				break;
 			case 1: 		// robot starts on right of corner 
-				display R auto
+				displayLCDstring(1,0,'L  RightAuto  R')
 				turn_Sign = 1;
 				wait1Msec(200);
 				break;
 		} // switch (auto_num) {
 	} // while (Center button is not pressed) {
-	*/
 } // void Auto_Selecter(void) {
 
 void Turn(int Power, int Angle) {
@@ -1476,11 +1477,9 @@ task autonomous() {
 
 	stopTask(Auto_Mogo);
 	Set_Mogo(100);
-	Drive(120,250);
-	while(Drive_Enable) {
-		wait1Msec(25);
-	}
-	Set_Mogo(50);
+	Set_Drive(120,120);
+	wait1Msec(500);
+	Set__Mogo(50);
 
 	wait1Msec(250);
 	Robot_MOI -= Mobile_Goal_Mass*.15*.15; 	// We've dropped off mogo's
